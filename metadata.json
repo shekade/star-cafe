@@ -1,0 +1,6 @@
+{
+  "name": "Sunday Crumb Bakery",
+  "description": "A playful, bold neighborhood bakery and cafe website with buttery pastries, slow-fermented bread, and joyful morning vibes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
