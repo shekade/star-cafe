@@ -13,12 +13,14 @@ import { OrderDrawer, CartItem } from './components/OrderDrawer';
 import { ContactModal } from './components/ContactModal';
 import { DirectionsModal } from './components/DirectionsModal';
 import { MenuModal } from './components/MenuModal';
+import { NextJsCodeViewer } from './components/NextJsCodeViewer';
 import { BakeryItem } from './data/bakeryData';
 
 export default function App() {
   // Brand name state (defaults to Sunday Crumb; customizable)
   const [cafeName, setCafeName] = useState('Sunday Crumb');
   const [isEditingName, setIsEditingName] = useState(false);
+  const [nextJsViewerOpen, setNextJsViewerOpen] = useState(false);
 
   // Cart / Pastry box state
   const [cart, setCart] = useState<CartItem[]>([
@@ -184,8 +186,8 @@ export default function App() {
         cafeName={cafeName}
       />
 
-      {/* Subtle Bottom Floating Cafe Name Customizer tool */}
-      <div className="fixed bottom-4 left-4 z-40">
+      {/* Subtle Bottom Floating Toolbar: Cafe Name Customizer + Next.js (JS) Code Viewer */}
+      <div className="fixed bottom-4 left-4 z-40 flex items-center gap-2">
         {isEditingName ? (
           <div className="bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-xl border-2 border-[#0B3FBF] flex items-center gap-2">
             <input
@@ -214,7 +216,20 @@ export default function App() {
             <span className="text-[10px] opacity-60 group-hover:opacity-100">✏️</span>
           </button>
         )}
+
+        <button
+          onClick={() => setNextJsViewerOpen(true)}
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0B3FBF] text-[#E6F55A] hover:bg-[#093299] rounded-full border-2 border-[#E6F55A] shadow-lg text-xs font-display transition-all duration-200 cursor-pointer"
+        >
+          <span>Next.js JS Code</span>
+          <span className="text-[10px] bg-[#E6F55A] text-[#0B3FBF] px-1 rounded-sm font-bold">.jsx</span>
+        </button>
       </div>
+
+      <NextJsCodeViewer
+        isOpen={nextJsViewerOpen}
+        onClose={() => setNextJsViewerOpen(false)}
+      />
 
     </div>
   );
