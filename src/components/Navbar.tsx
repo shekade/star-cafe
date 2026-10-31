@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Menu as MenuIcon, X } from 'lucide-react';
+import { ShoppingBag, Menu as MenuIcon, X, Sparkles, Calendar } from 'lucide-react';
 import { ScallopButton } from './ScallopButton';
 
 interface NavbarProps {
@@ -7,9 +7,18 @@ interface NavbarProps {
   cartCount: number;
   onOpenCart: () => void;
   onOpenCatering: () => void;
+  onOpenTableBooking?: () => void;
+  onOpenRecommendations?: () => void;
 }
 
-export function Navbar({ cafeName, cartCount, onOpenCart, onOpenCatering }: NavbarProps) {
+export function Navbar({
+  cafeName,
+  cartCount,
+  onOpenCart,
+  onOpenCatering,
+  onOpenTableBooking,
+  onOpenRecommendations,
+}: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const scrollTo = (id: string) => {
@@ -32,19 +41,37 @@ export function Navbar({ cafeName, cartCount, onOpenCart, onOpenCatering }: Navb
         </a>
 
         {/* Zone 2: Desktop Nav Links */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-semibold tracking-wide text-white/90">
+        <nav className="hidden md:flex items-center gap-7 text-sm font-semibold tracking-wide text-white/90">
           <button
             onClick={() => scrollTo('best-sellers')}
             className="hover:text-[#E6F55A] transition-colors cursor-pointer py-1"
           >
             Menu
           </button>
+          {onOpenRecommendations && (
+            <button
+              onClick={onOpenRecommendations}
+              className="hover:text-[#E6F55A] transition-colors cursor-pointer py-1 flex items-center gap-1 text-[#E6F55A]"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Smart Picks</span>
+            </button>
+          )}
           <button
             onClick={() => scrollTo('about')}
             className="hover:text-[#E6F55A] transition-colors cursor-pointer py-1"
           >
             Our bakery
           </button>
+          {onOpenTableBooking && (
+            <button
+              onClick={onOpenTableBooking}
+              className="hover:text-[#E6F55A] transition-colors cursor-pointer py-1 flex items-center gap-1"
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Book Table</span>
+            </button>
+          )}
           <button
             onClick={() => onOpenCatering()}
             className="hover:text-[#E6F55A] transition-colors cursor-pointer py-1"
@@ -102,6 +129,28 @@ export function Navbar({ cafeName, cartCount, onOpenCart, onOpenCatering }: Navb
           >
             Menu
           </button>
+          {onOpenRecommendations && (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenRecommendations();
+              }}
+              className="block w-full text-left font-display text-xl text-[#E6F55A] py-2 hover:text-white transition-colors"
+            >
+              ✨ Smart Food Recommendations
+            </button>
+          )}
+          {onOpenTableBooking && (
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenTableBooking();
+              }}
+              className="block w-full text-left font-display text-xl text-white py-2 hover:text-[#E6F55A] transition-colors"
+            >
+              🪑 Book a Table
+            </button>
+          )}
           <button
             onClick={() => scrollTo('about')}
             className="block w-full text-left font-display text-xl text-white py-2 hover:text-[#E6F55A] transition-colors"

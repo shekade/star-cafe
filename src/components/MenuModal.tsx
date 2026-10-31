@@ -1,23 +1,31 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Plus, Check } from 'lucide-react';
+import { X, Plus, Check, Sparkles } from 'lucide-react';
 import { BAKERY_ITEMS, BakeryItem } from '../data/bakeryData';
 
 interface MenuModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddToCart: (item: BakeryItem) => void;
+  onOpenRecommendations?: () => void;
   cafeName: string;
 }
 
-export function MenuModal({ isOpen, onClose, onAddToCart, cafeName }: MenuModalProps) {
-  const [activeCategory, setActiveCategory] = useState<'all' | 'pastry' | 'bread' | 'box'>('all');
+export function MenuModal({
+  isOpen,
+  onClose,
+  onAddToCart,
+  onOpenRecommendations,
+  cafeName,
+}: MenuModalProps) {
+  const [activeCategory, setActiveCategory] = useState<'all' | 'pastry' | 'bread' | 'coffee' | 'box'>('all');
   const [addedItem, setAddedItem] = useState<string | null>(null);
 
   const categories = [
     { id: 'all', label: 'All Items' },
     { id: 'pastry', label: 'Laminated Pastries' },
     { id: 'bread', label: 'Slow Sourdoughs' },
+    { id: 'coffee', label: 'Coffee & Drinks' },
     { id: 'box', label: 'Pastry Boxes' },
   ];
 
@@ -71,21 +79,36 @@ export function MenuModal({ isOpen, onClose, onAddToCart, cafeName }: MenuModalP
               </button>
             </div>
 
-            {/* Filter Tabs */}
-            <div className="px-6 py-4 bg-white/70 border-b border-[#0B3FBF]/10 flex flex-wrap gap-2 items-center">
-              {categories.map((cat) => (
+            {/* Filter Tabs & Recommendations trigger */}
+            <div className="px-6 py-4 bg-white/70 border-b border-[#0B3FBF]/10 flex flex-wrap gap-2 items-center justify-between">
+              <div className="flex flex-wrap gap-2 items-center">
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.id as any)}
+                    className={`px-4 py-1.5 rounded-full text-xs font-display uppercase tracking-wider transition-all duration-150 cursor-pointer ${
+                      activeCategory === cat.id
+                        ? 'bg-[#0B3FBF] text-[#E6F55A]'
+                        : 'bg-white text-[#0B3FBF] border border-[#0B3FBF]/20 hover:bg-[#0B3FBF]/5'
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+
+              {onOpenRecommendations && (
                 <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.id as any)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-display uppercase tracking-wider transition-all duration-150 cursor-pointer ${
-                    activeCategory === cat.id
-                      ? 'bg-[#0B3FBF] text-[#E6F55A]'
-                      : 'bg-white text-[#0B3FBF] border border-[#0B3FBF]/20 hover:bg-[#0B3FBF]/5'
-                  }`}
+                  onClick={() => {
+                    onClose();
+                    onOpenRecommendations();
+                  }}
+                  className="px-3.5 py-1.5 rounded-full text-xs font-display uppercase tracking-wider bg-[#E6F55A] text-[#0B3FBF] hover:bg-[#d8e847] font-bold flex items-center gap-1 cursor-pointer shadow-xs"
                 >
-                  {cat.label}
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Taste Matcher</span>
                 </button>
-              ))}
+              )}
             </div>
 
             {/* Scrollable Items Grid */}

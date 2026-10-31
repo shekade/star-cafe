@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { motion } from 'motion/react';
-import { MapPin, Clock, Navigation } from 'lucide-react';
+import { MapPin, Clock, Navigation, Calendar } from 'lucide-react';
 import { CAFE_INFO } from '../data/bakeryData';
 import { ScallopButton } from './ScallopButton';
 
-export function VisitUs({ onGetDirections }) {
+export function VisitUs({ onGetDirections, onBookTable }) {
   const handleDirectionsClick = () => {
     if (onGetDirections) {
       onGetDirections();
@@ -79,7 +79,8 @@ export function VisitUs({ onGetDirections }) {
             </div>
           </div>
 
-          <div className="pt-2">
+          {/* Action Buttons */}
+          <div className="pt-2 flex flex-wrap items-center gap-3">
             <ScallopButton
               variant="cobalt"
               size="md"
@@ -88,6 +89,17 @@ export function VisitUs({ onGetDirections }) {
             >
               Get directions
             </ScallopButton>
+
+            {onBookTable && (
+              <ScallopButton
+                variant="lime"
+                size="md"
+                onClick={onBookTable}
+                icon={<Calendar className="w-4 h-4" />}
+              >
+                Book a table
+              </ScallopButton>
+            )}
           </div>
         </motion.div>
       </div>

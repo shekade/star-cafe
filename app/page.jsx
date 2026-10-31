@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from '../components/Navbar';
 import { Hero } from '../components/Hero';
 import { About } from '../components/About';
@@ -15,31 +15,66 @@ import { OrderDrawer } from '../components/OrderDrawer';
 import { ContactModal } from '../components/ContactModal';
 import { DirectionsModal } from '../components/DirectionsModal';
 import { MenuModal } from '../components/MenuModal';
+import { TableBookingModal } from '../components/TableBookingModal';
+import { SmartRecommendationsModal } from '../components/SmartRecommendationsModal';
+import { AiAssistant } from '../components/AiAssistant';
+import { WhatsAppButton } from '../components/WhatsAppButton';
 
 export default function Home() {
   const [cafeName, setCafeName] = useState('Sunday Crumb');
-  const [cart, setCart] = useState([
-    {
-      item: {
-        id: 'classic-croissant',
-        name: 'Classic Butter Croissant',
-        price: 4.50,
-        category: 'pastry',
-        badge: 'Our Signature',
-        description: '72 laminated folds of cultured Normandy butter. Flakes when you look at it.',
-        image: '/src/assets/images/hero_croissant_crumb_1793434738701.jpg',
-        dietary: ['Vegetarian', 'Nut-Free'],
+  
+  // Cart state with localStorage persistence
+  const [cart, setCart] = useState(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('sunday_crumb_cart');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      }
+    } catch {
+      // ignore
+    }
+    return [
+      {
+        item: {
+          id: 'classic-croissant',
+          name: 'Classic Butter Croissant',
+          price: 4.50,
+          category: 'pastry',
+          badge: 'Our Signature',
+          description: '72 laminated folds of cultured Normandy butter. Flakes when you look at it.',
+          image: '/src/assets/images/hero_croissant_crumb_1793434738701.jpg',
+          dietary: ['Vegetarian', 'Nut-Free'],
+          flavor: ['sweet', 'buttery'],
+          temperature: ['warm', 'room-temp'],
+        },
+        quantity: 2,
       },
-      quantity: 2,
-    },
-  ]);
+    ];
+  });
 
+  // Sync cart to localStorage
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('sunday_crumb_cart', JSON.stringify(cart));
+      }
+    } catch {
+      // ignore
+    }
+  }, [cart]);
+
+  // Modals state
   const [cartOpen, setCartOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [contactType, setContactType] = useState('general');
   const [contactTitle, setContactTitle] = useState('Get in Touch');
   const [directionsOpen, setDirectionsOpen] = useState(false);
   const [menuModalOpen, setMenuModalOpen] = useState(false);
+  const [tableBookingOpen, setTableBookingOpen] = useState(false);
+  const [recommendationsOpen, setRecommendationsOpen] = useState(false);
 
   const cartTotalCount = cart.reduce((total, item) => total + item.quantity, 0);
 
@@ -69,6 +104,10 @@ export default function Home() {
     });
   };
 
+  const handleRemoveItem = (id) => {
+    setCart((prevCart) => prevCart.filter((ci) => ci.item.id !== id));
+  };
+
   const handleClearCart = () => setCart([]);
 
   const openCateringModal = () => {
@@ -95,6 +134,8 @@ export default function Home() {
         cartCount={cartTotalCount}
         onOpenCart={() => setCartOpen(true)}
         onOpenCatering={openCateringModal}
+        onOpenTableBooking={() => setTableBookingOpen(true)}
+        onOpenRecommendations={() => setRecommendationsOpen(true)}
       />
 
       <main className="flex-grow">
@@ -111,6 +152,7 @@ export default function Home() {
         <BestSellers
           onAddToCart={handleAddToCart}
           onExploreFullMenu={() => setMenuModalOpen(true)}
+          onOpenRecommendations={() => setRecommendationsOpen(true)}
         />
 
         <HowToOrder
@@ -121,6 +163,7 @@ export default function Home() {
 
         <VisitUs
           onGetDirections={() => setDirectionsOpen(true)}
+          onBookTable={() => setTableBookingOpen(true)}
         />
 
         <MarqueeStrip />
@@ -138,15 +181,43 @@ export default function Home() {
         onOpenMenu={() => setMenuModalOpen(true)}
       />
 
+      {/* Feature 4: Online Ordering Cart Drawer */}
       <OrderDrawer
         isOpen={cartOpen}
         onClose={() => setCartOpen(false)}
         cart={cart}
         onUpdateQuantity={handleUpdateQuantity}
+        onRemoveItem={handleRemoveItem}
         onClearCart={handleClearCart}
         cafeName={cafeName}
       />
 
+      {/* Feature 3: Table Booking Modal */}
+      <TableBookingModal
+        isOpen={tableBookingOpen}
+        onClose={() => setTableBookingOpen(false)}
+        cafeName={cafeName}
+      />
+
+      {/* Feature 2: Smart Food Recommendations Modal */}
+      <SmartRecommendationsModal
+        isOpen={recommendationsOpen}
+        onClose={() => setRecommendationsOpen(false)}
+        onAddToCart={handleAddToCart}
+      />
+
+      {/* Feature 1: Floating AI Cafe Assistant */}
+      <AiAssistant
+        onAddToCart={handleAddToCart}
+        cafeName={cafeName}
+      />
+
+      {/* Feature 5: Floating WhatsApp Contact Widget */}
+      <WhatsAppButton
+        cafeName={cafeName}
+      />
+
+      {/* Existing Modals */}
       <ContactModal
         isOpen={contactOpen}
         onClose={() => setContactOpen(false)}
@@ -164,6 +235,7 @@ export default function Home() {
         isOpen={menuModalOpen}
         onClose={() => setMenuModalOpen(false)}
         onAddToCart={handleAddToCart}
+        onOpenRecommendations={() => setRecommendationsOpen(true)}
         cafeName={cafeName}
       />
     </div>

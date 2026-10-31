@@ -7,6 +7,8 @@ export interface BakeryItem {
   description: string;
   image: string;
   dietary?: string[];
+  flavor?: ('sweet' | 'savory' | 'spiced' | 'buttery')[];
+  temperature?: ('hot' | 'cold' | 'room-temp')[];
 }
 
 export const BAKERY_ITEMS: BakeryItem[] = [
@@ -19,6 +21,8 @@ export const BAKERY_ITEMS: BakeryItem[] = [
     description: '72 laminated folds of cultured Normandy butter. Flakes when you look at it.',
     image: '/src/assets/images/hero_croissant_crumb_1793434738701.jpg',
     dietary: ['Vegetarian', 'Nut-Free'],
+    flavor: ['buttery'],
+    temperature: ['hot', 'room-temp'],
   },
   {
     id: 'cardamom-bun',
@@ -29,6 +33,8 @@ export const BAKERY_ITEMS: BakeryItem[] = [
     description: 'Laminated dough swirled with toasted green cardamom and raw demerara sugar crunch.',
     image: '/src/assets/images/pastry_cinnamon_bun_1793434739515.jpg',
     dietary: ['Vegetarian'],
+    flavor: ['sweet', 'spiced'],
+    temperature: ['hot', 'room-temp'],
   },
   {
     id: 'pain-au-chocolat',
@@ -38,6 +44,8 @@ export const BAKERY_ITEMS: BakeryItem[] = [
     description: 'Double batons of 70% dark Valrhona tucked into cloud-like butter layers.',
     image: '/src/assets/images/pastry_pain_chocolat_1793434739673.jpg',
     dietary: ['Vegetarian', 'Nut-Free'],
+    flavor: ['sweet', 'buttery'],
+    temperature: ['hot', 'room-temp'],
   },
   {
     id: 'country-sourdough',
@@ -48,6 +56,8 @@ export const BAKERY_ITEMS: BakeryItem[] = [
     description: 'Stoneground flour, wild starter, blistered crust with deep airy crumb pockets.',
     image: '/src/assets/images/bakery_counter_bag_1793434740010.jpg',
     dietary: ['Vegan', 'Dairy-Free', 'Nut-Free'],
+    flavor: ['savory'],
+    temperature: ['room-temp'],
   },
   {
     id: 'almond-brioche',
@@ -57,6 +67,43 @@ export const BAKERY_ITEMS: BakeryItem[] = [
     description: 'Twice-baked enriched brioche filled with roasted almond cream and flaked almonds.',
     image: '/src/assets/images/pastry_cinnamon_bun_1793434739515.jpg',
     dietary: ['Vegetarian'],
+    flavor: ['sweet', 'buttery'],
+    temperature: ['room-temp'],
+  },
+  {
+    id: 'velvet-flat-white',
+    name: 'Velvet Flat White',
+    price: 4.25,
+    category: 'coffee',
+    badge: 'Counter Favorite',
+    description: 'Double ristretto of Ethiopian heirloom beans poured over micro-foamed milk.',
+    image: '/src/assets/images/pastry_table_spread_1793434739663.jpg',
+    dietary: ['Vegetarian', 'Nut-Free'],
+    flavor: ['buttery', 'savory'],
+    temperature: ['hot'],
+  },
+  {
+    id: 'cold-brew-tonic',
+    name: 'Sparkling Cold Brew Tonic',
+    price: 4.75,
+    category: 'coffee',
+    description: '18-hour cold steeped single-origin brew with elderflower tonic and candied orange peel.',
+    image: '/src/assets/images/pastry_table_spread_1793434739663.jpg',
+    dietary: ['Vegan', 'Dairy-Free', 'Nut-Free'],
+    flavor: ['spiced', 'sweet'],
+    temperature: ['cold'],
+  },
+  {
+    id: 'iced-cardamom-latte',
+    name: 'Iced Cardamom Spiced Latte',
+    price: 5.00,
+    category: 'coffee',
+    badge: 'Staff Pick',
+    description: 'Espresso shaken over ice with toasted cardamom syrup and oat milk.',
+    image: '/src/assets/images/pastry_table_spread_1793434739663.jpg',
+    dietary: ['Vegan', 'Dairy-Free', 'Nut-Free'],
+    flavor: ['sweet', 'spiced'],
+    temperature: ['cold'],
   },
   {
     id: 'weekend-box',
@@ -67,6 +114,8 @@ export const BAKERY_ITEMS: BakeryItem[] = [
     description: 'Two croissants, two morning buns, two pains au chocolat. Instant neighborhood hero.',
     image: '/src/assets/images/pastry_table_spread_1793434739663.jpg',
     dietary: ['Vegetarian'],
+    flavor: ['sweet', 'buttery'],
+    temperature: ['hot', 'room-temp'],
   },
 ];
 
@@ -85,6 +134,7 @@ export const CAFE_INFO = {
     { day: 'Monday', time: 'Closed (Resting Dough)' },
   ],
   phone: '(555) 234-5678',
+  rawPhone: '15552345678',
   email: 'hello@sundaycrumb.com',
   instagram: '@sundaycrumb',
   googleMapsUrl: 'https://maps.google.com/?q=18+Market+Lane+Brookfield',

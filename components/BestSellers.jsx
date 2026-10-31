@@ -6,7 +6,7 @@ import { Plus, Check } from 'lucide-react';
 import { BAKERY_ITEMS } from '../data/bakeryData';
 import { ScallopButton } from './ScallopButton';
 
-export function BestSellers({ onAddToCart, onExploreFullMenu }) {
+export function BestSellers({ onAddToCart, onExploreFullMenu, onOpenRecommendations }) {
   const [addedId, setAddedId] = useState(null);
 
   const handleAdd = (item) => {
@@ -119,7 +119,7 @@ export function BestSellers({ onAddToCart, onExploreFullMenu }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mt-16 text-center"
+          className="mt-16 flex flex-wrap items-center justify-center gap-4"
         >
           <ScallopButton
             variant="cobalt"
@@ -128,6 +128,15 @@ export function BestSellers({ onAddToCart, onExploreFullMenu }) {
           >
             Explore the Menu
           </ScallopButton>
+          {onOpenRecommendations && (
+            <ScallopButton
+              variant="lime"
+              size="md"
+              onClick={onOpenRecommendations}
+            >
+              ✨ Smart Recommendations
+            </ScallopButton>
+          )}
         </motion.div>
       </div>
     </section>

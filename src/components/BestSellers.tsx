@@ -7,9 +7,10 @@ import { ScallopButton } from './ScallopButton';
 interface BestSellersProps {
   onAddToCart: (item: BakeryItem) => void;
   onExploreFullMenu: () => void;
+  onOpenRecommendations?: () => void;
 }
 
-export function BestSellers({ onAddToCart, onExploreFullMenu }: BestSellersProps) {
+export function BestSellers({ onAddToCart, onExploreFullMenu, onOpenRecommendations }: BestSellersProps) {
   const [addedId, setAddedId] = useState<string | null>(null);
 
   const handleAdd = (item: BakeryItem) => {
@@ -126,13 +127,13 @@ export function BestSellers({ onAddToCart, onExploreFullMenu }: BestSellersProps
           })}
         </div>
 
-        {/* Explore the Menu Button Centered */}
+        {/* Explore the Menu Button + Smart Recommendations */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mt-16 text-center"
+          className="mt-16 flex flex-wrap items-center justify-center gap-4"
         >
           <ScallopButton
             variant="cobalt"
@@ -141,6 +142,15 @@ export function BestSellers({ onAddToCart, onExploreFullMenu }: BestSellersProps
           >
             Explore the Menu
           </ScallopButton>
+          {onOpenRecommendations && (
+            <ScallopButton
+              variant="lime"
+              size="md"
+              onClick={onOpenRecommendations}
+            >
+              ✨ Smart Recommendations
+            </ScallopButton>
+          )}
         </motion.div>
 
       </div>

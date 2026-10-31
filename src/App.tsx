@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { About } from './components/About';
@@ -13,32 +13,51 @@ import { OrderDrawer, CartItem } from './components/OrderDrawer';
 import { ContactModal } from './components/ContactModal';
 import { DirectionsModal } from './components/DirectionsModal';
 import { MenuModal } from './components/MenuModal';
-import { NextJsCodeViewer } from './components/NextJsCodeViewer';
+import { TableBookingModal } from './components/TableBookingModal';
+import { SmartRecommendationsModal } from './components/SmartRecommendationsModal';
+import { AiAssistant } from './components/AiAssistant';
+import { WhatsAppButton } from './components/WhatsAppButton';
 import { BakeryItem } from './data/bakeryData';
 
 export default function App() {
-  // Brand name state (defaults to Sunday Crumb; customizable)
-  const [cafeName, setCafeName] = useState('Sunday Crumb');
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [nextJsViewerOpen, setNextJsViewerOpen] = useState(false);
+  const [cafeName] = useState('Sunday Crumb');
 
-  // Cart / Pastry box state
-  const [cart, setCart] = useState<CartItem[]>([
-    // Start with 1 complimentary fresh croissant so drawer is immediately enjoyable
-    {
-      item: {
-        id: 'classic-croissant',
-        name: 'Classic Butter Croissant',
-        price: 4.50,
-        category: 'pastry',
-        badge: 'Our Signature',
-        description: '72 laminated folds of cultured Normandy butter. Flakes when you look at it.',
-        image: '/src/assets/images/hero_croissant_crumb_1793434738701.jpg',
-        dietary: ['Vegetarian', 'Nut-Free'],
+  // Cart / Pastry box state with localStorage persistence
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('sunday_crumb_cart');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // ignore
+    }
+    return [
+      {
+        item: {
+          id: 'classic-croissant',
+          name: 'Classic Butter Croissant',
+          price: 4.50,
+          category: 'pastry',
+          badge: 'Our Signature',
+          description: '72 laminated folds of cultured Normandy butter. Flakes when you look at it.',
+          image: '/src/assets/images/hero_croissant_crumb_1793434738701.jpg',
+          dietary: ['Vegetarian', 'Nut-Free'],
+        },
+        quantity: 2,
       },
-      quantity: 2,
-    },
-  ]);
+    ];
+  });
+
+  // Sync cart changes to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('sunday_crumb_cart', JSON.stringify(cart));
+    } catch {
+      // ignore
+    }
+  }, [cart]);
 
   // Modal visibility states
   const [cartOpen, setCartOpen] = useState(false);
@@ -47,6 +66,8 @@ export default function App() {
   const [contactTitle, setContactTitle] = useState('Get in Touch');
   const [directionsOpen, setDirectionsOpen] = useState(false);
   const [menuModalOpen, setMenuModalOpen] = useState(false);
+  const [tableBookingOpen, setTableBookingOpen] = useState(false);
+  const [recommendationsOpen, setRecommendationsOpen] = useState(false);
 
   const cartTotalCount = cart.reduce((total, item) => total + item.quantity, 0);
 
@@ -74,6 +95,10 @@ export default function App() {
         })
         .filter(Boolean) as CartItem[];
     });
+  };
+
+  const handleRemoveItem = (id: string) => {
+    setCart((prevCart) => prevCart.filter((ci) => ci.item.id !== id));
   };
 
   const handleClearCart = () => setCart([]);
@@ -104,6 +129,8 @@ export default function App() {
         cartCount={cartTotalCount}
         onOpenCart={() => setCartOpen(true)}
         onOpenCatering={openCateringModal}
+        onOpenTableBooking={() => setTableBookingOpen(true)}
+        onOpenRecommendations={() => setRecommendationsOpen(true)}
       />
 
       <main className="flex-grow">
@@ -123,6 +150,7 @@ export default function App() {
         <BestSellers
           onAddToCart={handleAddToCart}
           onExploreFullMenu={() => setMenuModalOpen(true)}
+          onOpenRecommendations={() => setRecommendationsOpen(true)}
         />
 
         {/* 5. How to Order: Full blue section with wavy edges, stacked cards */}
@@ -132,9 +160,10 @@ export default function App() {
           onOpenCatering={openCateringModal}
         />
 
-        {/* 6. Visit Us: "Come on in." cream card with hours table and directions */}
+        {/* 6. Visit Us: "Come on in." cream card with hours table, directions, and table booking */}
         <VisitUs
           onGetDirections={() => setDirectionsOpen(true)}
+          onBookTable={() => setTableBookingOpen(true)}
         />
 
         {/* 7. Marquee Strip: Infinite horizontal scrolling bakery doodles */}
@@ -162,6 +191,7 @@ export default function App() {
         onClose={() => setCartOpen(false)}
         cart={cart}
         onUpdateQuantity={handleUpdateQuantity}
+        onRemoveItem={handleRemoveItem}
         onClearCart={handleClearCart}
         cafeName={cafeName}
       />
@@ -183,53 +213,35 @@ export default function App() {
         isOpen={menuModalOpen}
         onClose={() => setMenuModalOpen(false)}
         onAddToCart={handleAddToCart}
+        onOpenRecommendations={() => setRecommendationsOpen(true)}
         cafeName={cafeName}
       />
 
-      {/* Subtle Bottom Floating Toolbar: Cafe Name Customizer + Next.js (JS) Code Viewer */}
-      <div className="fixed bottom-4 left-4 z-40 flex items-center gap-2">
-        {isEditingName ? (
-          <div className="bg-white/95 backdrop-blur-md p-3 rounded-2xl shadow-xl border-2 border-[#0B3FBF] flex items-center gap-2">
-            <input
-              type="text"
-              value={cafeName}
-              onChange={(e) => setCafeName(e.target.value)}
-              placeholder="Enter Cafe Name"
-              className="px-2.5 py-1 text-xs font-display font-bold text-[#0B3FBF] border border-[#0B3FBF]/30 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#0B3FBF]"
-              autoFocus
-            />
-            <button
-              onClick={() => setIsEditingName(false)}
-              className="px-2.5 py-1 bg-[#E6F55A] text-[#0B3FBF] rounded-lg text-xs font-display font-bold cursor-pointer hover:bg-[#d8e847]"
-            >
-              Done
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => setIsEditingName(true)}
-            title="Customise Cafe Name"
-            className="group flex items-center gap-1.5 px-3 py-1.5 bg-[#FFF8E7] text-[#0B3FBF] hover:bg-[#E6F55A] rounded-full border-2 border-[#0B3FBF] shadow-lg text-xs font-display transition-all duration-200 cursor-pointer"
-          >
-            <span className="opacity-80">Cafe:</span>
-            <span className="font-bold underline decoration-dotted">{cafeName}</span>
-            <span className="text-[10px] opacity-60 group-hover:opacity-100">✏️</span>
-          </button>
-        )}
-
-        <button
-          onClick={() => setNextJsViewerOpen(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0B3FBF] text-[#E6F55A] hover:bg-[#093299] rounded-full border-2 border-[#E6F55A] shadow-lg text-xs font-display transition-all duration-200 cursor-pointer"
-        >
-          <span>Next.js JS Code</span>
-          <span className="text-[10px] bg-[#E6F55A] text-[#0B3FBF] px-1 rounded-sm font-bold">.jsx</span>
-        </button>
-      </div>
-
-      <NextJsCodeViewer
-        isOpen={nextJsViewerOpen}
-        onClose={() => setNextJsViewerOpen(false)}
+      <TableBookingModal
+        isOpen={tableBookingOpen}
+        onClose={() => setTableBookingOpen(false)}
+        cafeName={cafeName}
       />
+
+      <SmartRecommendationsModal
+        isOpen={recommendationsOpen}
+        onClose={() => setRecommendationsOpen(false)}
+        onAddToCart={handleAddToCart}
+        cafeName={cafeName}
+      />
+
+      {/* 1. Floating AI Cafe Assistant */}
+      <AiAssistant
+        onAddToCart={handleAddToCart}
+        cafeName={cafeName}
+      />
+
+      {/* 5. Floating WhatsApp Button */}
+      <WhatsAppButton
+        cafeName={cafeName}
+      />
+
+
 
     </div>
   );
